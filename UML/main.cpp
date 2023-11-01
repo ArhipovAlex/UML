@@ -44,6 +44,14 @@ public:
 		cout << "Fuel level: "<<fuel<< " liters.\n";
 	}
 };
+class Engine
+{
+	double consumption;
+	double consumption_per_sec;
+	bool is_started;
+public:
+	const 
+};
 
 //#define TANK_CHECK
 #define ENGINE_CHECK
