@@ -1,4 +1,4 @@
-﻿﻿#include<iostream>
+﻿#include<iostream>
 using namespace std;
 
 #define MIN_TANK_VOLUME 20
