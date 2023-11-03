@@ -114,10 +114,12 @@ class Car
 	const int MAX_SPEED;
 	int speed;
 	bool driver_inside;
+	bool go;
 	struct ControlThreads
 	{
 		std::thread panel_thread;
 		std::thread engine_idle_thread;
+		std::thread car_on_go;
 	}control_threads;
 public:
 	const int get_max_speed()const
@@ -175,6 +177,18 @@ public:
 		engine.stop();
 		if (control_threads.engine_idle_thread.joinable())control_threads.engine_idle_thread.join();
 	}
+	void forward()
+	{
+		if (!engine.started()) return;
+		else if (go) 
+		{
+			speed = speed+1;
+		}
+		else
+		{
+			speed = (speed-1<0?0:speed-1);
+		}
+	}
 	void control()
 	{
 		char key;
@@ -205,6 +219,22 @@ public:
 				if (engine.started())stop();
 				else start();
 				break;
+			case 'W':
+			case 'w':
+				if (engine.started())
+				{
+					go = true;
+					control_threads.car_on_go = std::thread(&Car::forward, this);
+				}
+				break;
+			case 'S':
+			case 's':
+				if (engine.started())
+				{
+					go=false;
+					if (control_threads.car_on_go.joinable())control_threads.car_on_go.join();
+				}
+				break;
 			case 27:
 				stop();
 				get_out();
@@ -232,6 +262,7 @@ public:
 				SetConsoleTextAttribute(hConsole, 0x07);
 			}
 			cout << "Engine is " << (engine.started() ? "started" : "stopped") << endl;
+			cout << "Speed: " << speed << " km/ch" << endl;
 			std::this_thread::sleep_for(100ms);
 		}
 	}
